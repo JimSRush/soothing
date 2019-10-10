@@ -187,6 +187,6 @@ def generate_landscape():
     layer_4 = midpoint_displacement([0, 350], [width, 320], 0.9, 90, 8)
 
     landscape = draw_layers([layer_4, layer_3, layer_2, layer_1], width, height)
-    landscape.save(os.getcwd() + "/testing.png")
+    # landscape.save(os.getcwd() + "/testing.png")
     # print("Generating" + landscape)
     return landscape

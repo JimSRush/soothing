@@ -44,5 +44,3 @@ def upload_image(image):
 def lambda_handler(_event_json, _context):
     image = generateImage()
     upload_image(image)
-
-lambda_handler(None, None)

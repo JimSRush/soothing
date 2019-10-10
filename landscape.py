@@ -11,7 +11,6 @@ import random                         # midpoint displacement
 from PIL import Image, ImageDraw      # image creation and drawing
 import bisect                         # working with the sorted list of points
 
-
 # Iterative midpoint vertical displacement
 def midpoint_displacement(start, end, roughness, vertical_displacement=None,
                           num_of_iterations=16):
@@ -63,13 +62,29 @@ def midpoint_displacement(start, end, roughness, vertical_displacement=None,
         iteration += 1
     return points
 
+def generate_random_palette():
+    dicts = [{'0': (173, 189, 209), '1': (141, 163, 191),
+                      '2': (108, 136, 172), '3': (83, 110, 147), '4': (64, 85, 114),
+                      '5': (46, 61, 82), '6': (239, 242, 246)},
+                      {'0': (195, 157, 224), '1': (158, 98, 204),
+                      '2': (130, 79, 138), '3': (68, 28, 99), '4': (49, 7, 82),
+                      '5': (23, 3, 38), '6': (240, 203, 163)}]
+    return random.choice(dicts)
+
+# Strahan
+                    #   color_dict = {'0': (173, 189, 209), '1': (141, 163, 191),
+                    #   '2': (108, 136, 172), '3': (83, 110, 147), '4': (64, 85, 114),
+                    #   '5': (46, 61, 82), '6': (239, 242, 246)}
+
+# Caitlin Spice
 
 def draw_layers(layers, width, height, color_dict=None):
     # Default color palette
+
+    #'6' is sky
+
     if color_dict is None:
-        color_dict = {'0': (195, 157, 224), '1': (158, 98, 204),
-                      '2': (130, 79, 138), '3': (68, 28, 99), '4': (49, 7, 82),
-                      '5': (23, 3, 38), '6': (240, 203, 163)}
+          color_dict = generate_random_palette()
     else:
         # len(color_dict) should be at least: # of layers +1 (background color)
         if len(color_dict) < len(layers)+1:
@@ -115,11 +130,14 @@ def generate_landscape():
     width = 1000  # Terrain width
     height = 500  # Terrain height
     # Compute different layers of the landscape
-    layer_1 = midpoint_displacement([250, 0], [width, 200], 1.4, 20, 12)
-    layer_2 = midpoint_displacement([0, 180], [width, 80], 1.2, 30, 12)
-    layer_3 = midpoint_displacement([0, 270], [width, 190], 1, 120, 9)
-    layer_4 = midpoint_displacement([0, 350], [width, 320], 0.9, 250, 8)
+    layer_1 = midpoint_displacement([250, 0], [width, 200], 0.9, 20, 12)
+    layer_2 = midpoint_displacement([0, 180], [width, 80], 0.9, 30, 12)
+    layer_3 = midpoint_displacement([0, 270], [width, 190], 0.9, 80, 9)
+    layer_4 = midpoint_displacement([0, 350], [width, 320], 0.9, 90, 8)
 
     landscape = draw_layers([layer_4, layer_3, layer_2, layer_1], width, height)
-    print("generateing")
+    # landscape.save(os.getcwd()+'/testing.png')
+    # print("Generating" + landscape)
     return landscape
+
+

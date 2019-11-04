@@ -87,13 +87,13 @@ def generate_random_palette():
             "6": (240, 203, 163),
         },
         {
-            "0": (22, 164, 39),
-            "1": (8, 136, 24),
-            "2": (0, 112, 14),
-            "3": (0, 83, 10),
+            "0": (246, 162, 25),
+            "1": (224, 113, 32),
+            "2": (173, 63, 13),
+            "3": (146, 37, 4),
             "4": (64, 85, 114),
             "5": (46, 61, 82),
-            "6": (83, 110, 147),
+            "6": (252, 248, 1),
         },
     ]
     return random.choice(dicts)
@@ -176,6 +176,21 @@ def draw_layers(layers, width, height, color_dict=None):
 
     return landscape
 
+def random_tint(pixel):
+    variation = random.uniform(0.25, 0.3)
+    r = 255-pixel[0] + int(variation * (255-pixel[0]))
+    g = 255-pixel[1] + int(variation * (255-pixel[1]))
+    b = 255-pixel[2] + int(variation * (255-pixel[2]))
+
+    return (r,g,b)
+
+def dot_landscape(width, height, image):
+    for x in range(width):
+        for y in range(height):
+            pixel = image.getpixel((x,y))
+            image.putpixel((x,y), random_tint(pixel))
+            # print(pixel)
+    return image
 
 def generate_landscape():
     width = 1000  # Terrain width
@@ -187,6 +202,8 @@ def generate_landscape():
     layer_4 = midpoint_displacement([0, 350], [width, 320], 0.9, 90, 8)
 
     landscape = draw_layers([layer_4, layer_3, layer_2, layer_1], width, height)
+    # landscape = dot_landscape(width, height, landscape)
     # landscape.save(os.getcwd() + "/testing.png")
     # print("Generating" + landscape)
     return landscape
+

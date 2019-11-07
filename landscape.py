@@ -10,6 +10,9 @@ import os  # path resolving and image saving
 import random  # midpoint displacement
 from PIL import Image, ImageDraw  # image creation and drawing
 import bisect  # working with the sorted list of points
+import colorsys
+
+current_color = None
 
 # Iterative midpoint vertical displacement
 def midpoint_displacement(
@@ -111,13 +114,13 @@ def generate_random_palette():
 
     # Caitlin Spice
     # caitlin_spice = {
-    #     "0": (22, 164, 39),
-    #     "1": (8, 136, 24),
-    #     "2": (0, 112, 14),
-    #     "3": (0, 83, 10),
-    #     "4": (64, 85, 114),
-    #     "5": (46, 61, 82),
-    #     "6": (55, 94, 147),
+        # "0": (246, 162, 25),
+        # "1": (224, 113, 32),
+        # "2": (173, 63, 13),
+        # "3": (146, 37, 4),
+        # "4": (64, 85, 114),
+        # "5": (46, 61, 82),
+        # "6": (252, 248, 1),
     # }
 
 
@@ -126,6 +129,8 @@ def draw_layers(layers, width, height, color_dict=None):
 
     if color_dict is None:
         color_dict = generate_random_palette()
+        global current_color
+        current_color = color_dict[str(len(color_dict) - 1)]
     else:
         # len(color_dict) should be at least: # of layers +1 (background color)
         if len(color_dict) < len(layers) + 1:
@@ -176,20 +181,43 @@ def draw_layers(layers, width, height, color_dict=None):
 
     return landscape
 
-def random_tint(pixel):
-    variation = random.uniform(0.25, 0.3)
-    r = 255-pixel[0] + int(variation * (255-pixel[0]))
-    g = 255-pixel[1] + int(variation * (255-pixel[1]))
-    b = 255-pixel[2] + int(variation * (255-pixel[2]))
+# private static Color Tint(Color source, Color tint, decimal alpha)
+# {
+#   //(tint -source)*alpha + source
+#   var red = Convert.ToInt32(((tint.R - source.R) * alpha + source.R));
+#   var blue = Convert.ToInt32(((tint.B - source.B) * alpha + source.B));
+#   var green = Convert.ToInt32(((tint.G - source.G) * alpha + source.G));
+#   return Color.FromArgb(255, red, green, blue);
+# }
 
-    return (r,g,b)
+def random_tint(pixel):
+    # current_color
+    sun = (255,255,255,255)
+
+    alpha = (255,)
+    background = current_color + alpha
+    if pixel == sun or pixel == background:
+        return pixel
+
+    variation = random.uniform(0.9, 0.95)
+    if random.randint(0,100) < 50:
+        # '''
+        # Given RGB values, returns the RGB values of the same colour slightly
+        # brightened (towards white) 
+        # '''
+        h,s,v = colorsys.rgb_to_hsv(1/255*pixel[0], 1/255*pixel[1], 1/255*pixel[2])
+        v = min(v+0.1, 1)              #limit to 1
+        color = colorsys.hsv_to_rgb(h,s,v)
+        rgb = (int(color[0]*255), int(color[1]*255), int(color[2]*255))
+        return rgb
+        # return colorsys.hls_to_rgb(int(h), int(l), int(s))
+    return pixel
 
 def dot_landscape(width, height, image):
     for x in range(width):
         for y in range(height):
             pixel = image.getpixel((x,y))
             image.putpixel((x,y), random_tint(pixel))
-            # print(pixel)
     return image
 
 def generate_landscape():
@@ -202,8 +230,10 @@ def generate_landscape():
     layer_4 = midpoint_displacement([0, 350], [width, 320], 0.9, 90, 8)
 
     landscape = draw_layers([layer_4, layer_3, layer_2, layer_1], width, height)
-    # landscape = dot_landscape(width, height, landscape)
+    landscape = landscape.convert(mode=None, matrix=None, palette=0, colors=256)
+    landscape = dot_landscape(width, height, landscape)
     # landscape.save(os.getcwd() + "/testing.png")
-    # print("Generating" + landscape)
+    # print("Generating")
     return landscape
 
+generate_landscape()

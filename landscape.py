@@ -225,5 +225,3 @@ def generate_landscape():
     # landscape.save(os.getcwd() + "/testing.png")
     # print("Generating")
     return landscape
-
-generate_landscape()

@@ -180,16 +180,6 @@ def draw_layers(layers, width, height, color_dict=None):
             )
 
     return landscape
-
-# private static Color Tint(Color source, Color tint, decimal alpha)
-# {
-#   //(tint -source)*alpha + source
-#   var red = Convert.ToInt32(((tint.R - source.R) * alpha + source.R));
-#   var blue = Convert.ToInt32(((tint.B - source.B) * alpha + source.B));
-#   var green = Convert.ToInt32(((tint.G - source.G) * alpha + source.G));
-#   return Color.FromArgb(255, red, green, blue);
-# }
-
 def random_tint(pixel):
     # current_color
     sun = (255,255,255,255)
